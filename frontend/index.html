@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fake News Classifier</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 50px; background-color: #f4f4f4; }
+    h1 { color: #333; }
+    textarea { width: 100%; height: 150px; padding: 10px; }
+    button { padding: 10px 20px; margin-top: 10px; margin-right: 10px; }
+    #result { margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <h1>📰 Fake News Detection 🗞️</h1>
+
+  <textarea id="newsText" placeholder="Paste your news article here..."></textarea><br/>
+
+  <button onclick="predict('roberta')">Predict with RoBERTa</button>
+  <button onclick="predict('distilbert')">Predict with DistilBERT</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function predict(modelType) {
+      const text = document.getElementById("newsText").value;
+
+      if (!text.trim()) {
+        alert("Please enter news text!");
+        return;
+      }
+
+      let url = "";
+      if (modelType === 'roberta') {
+        url = "http://127.0.0.1:8000/predict/roberta";
+      } else if (modelType === 'distilbert') {
+        url = "http://127.0.0.1:8000/predict/distilbert";
+      }
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ 
+              text: text
+          })
+        });
+
+        const data = await response.json();
+        document.getElementById('result').innerText = 
+          `Model: ${data.model}\nPrediction: ${data.prediction}`;
+
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('result').innerText = 'Error occurred.';
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+fastapi==0.103.0
+uvicorn==0.22.0
+transformers
+torch
+pydantic
+websockets==11.0.3
